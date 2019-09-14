@@ -1,5 +1,8 @@
 package edu.illinois.cs.cs125.fall2019.mp;
 
+import static java.util.Arrays.binarySearch;
+import static java.util.Arrays.sort;
+
 /**
  * Holds methods for managing a path of target claims.
  * <p>
@@ -21,6 +24,7 @@ package edu.illinois.cs.cs125.fall2019.mp;
  */
 public class TargetVisitChecker {
 
+
     /**
      * Gets an index of an unvisited target within the specified range of the current location.
      * <p>
@@ -41,9 +45,20 @@ public class TargetVisitChecker {
     public static int getTargetWithinRange(final double[] latitudes, final double[] longitudes, final int[] path,
                                            final double currentLatitude, final double currentLongitude,
                                            final int range) {
+        int index = -1;
+        for (int x = 0; x < latitudes.length; x++) {
+            int[] temp = path.clone();
+            sort(temp);
+            if (binarySearch(temp, x) >= 0) {
+                continue;
+            }
+            if ((LatLngUtils.distance(latitudes[x], longitudes[x], currentLatitude, currentLongitude) <= range)) {
+                index = x;
+            }
+        }
         // HINT: To find the distance in meters between two locations, use a provided helper function:
         // LatLngUtils.distance(oneLatitude, oneLongitude, otherLatitude, otherLongitude)
-        return -1;
+        return index;
     }
 
     /**
@@ -68,8 +83,10 @@ public class TargetVisitChecker {
      * @param tryVisit index of the target to try to visit
      * @return whether the target can be claimed
      */
+    @SuppressWarnings("checkstyle:EmptyBlock")
     public static boolean checkSnakeRule(final double[] latitudes, final double[] longitudes, final int[] path,
                                          final int tryVisit) {
+
         // HINT: To determine whether two lines cross, use a provided helper function:
         // LineCrossDetector.linesCross(oneStartLat, oneStartLng, oneEndLat, oneEndLng,
         //                              otherStartLat, otherStartLng, otherEndLat, otherEndLng)
@@ -86,6 +103,17 @@ public class TargetVisitChecker {
      * @return the index in the path array that was updated, or -1 if the path array was full
      */
     public static int visitTarget(final int[] path, final int targetIndex) {
+        int index = -1;
+        for (int x = 0; x < path.length; x++) {
+            if (path[x] == -1) {
+                index = x;
+                break;
+            }
+        }
+        if (index != -1) {
+            path[index] = targetIndex;
+            return index;
+        }
         return -1;
     }
 
