@@ -178,6 +178,9 @@ public final class GameActivity extends AppCompatActivity {
 
         // Use the provided placeMarker function to add a marker at every target's location
         // HINT: onCreate initializes the relevant arrays (targetLats, targetLngs, path) for you
+        for (int x = 0; x < targetLats.length; x++) {
+            placeMarker(targetLats[x], targetLngs[x]);
+        }
     }
 
     /**
@@ -189,6 +192,7 @@ public final class GameActivity extends AppCompatActivity {
      */
     @VisibleForTesting // Actually just visible for documentation - not called directly by test suites
     public void updateLocation(final double latitude, final double longitude) {
+
         // This function is responsible for updating the game state and map according to the user's movements
 
         // HINT: To operate on the game state, use the three methods you implemented in TargetVisitChecker
@@ -199,6 +203,23 @@ public final class GameActivity extends AppCompatActivity {
         // Sequential captures should create green connecting lines on the map
         // HINT: Use the provided changeMarkerColor and addLine functions to manipulate the map
         // HINT: Use the provided color constants near the top of this file as arguments to those functions
+        int target = TargetVisitChecker.getTargetWithinRange(targetLats, targetLngs, path,
+                latitude, longitude, PROXIMITY_THRESHOLD);
+        if (target != -1) {
+            if (TargetVisitChecker.checkSnakeRule(targetLats, targetLngs, path, target)) {
+                changeMarkerColor(targetLats[target], targetLngs[target], CAPTURED_MARKER_HUE);
+                int loc = 0;
+                for (; loc < path.length; loc++) {
+                    if (path[loc] == -1) {
+                        break;
+                    }
+                }
+                if (loc > 0) {
+                    addLine(targetLats[path[loc - 1]], targetLngs[path[loc - 1]], targetLats[target], targetLngs[target], PLAYER_COLOR);
+                }
+                TargetVisitChecker.visitTarget(path, target);
+            }
+        }
     }
 
     /**

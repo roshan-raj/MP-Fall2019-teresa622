@@ -86,12 +86,30 @@ public class TargetVisitChecker {
     @SuppressWarnings("checkstyle:EmptyBlock")
     public static boolean checkSnakeRule(final double[] latitudes, final double[] longitudes, final int[] path,
                                          final int tryVisit) {
-
+        boolean result = true;
+        int index = 0;
+        for (; index < path.length; index++) {
+            if (path[index] == -1) {
+                break;
+            }
+        }
+        if (index <= 1) {
+            return true;
+        }
+        for (int x = 0; x < index - 1; x++) {
+            if (LineCrossDetector.linesCross(latitudes[path[x]], longitudes[path[x]],
+                    latitudes[path[x + 1]], longitudes[path[x + 1]], latitudes[path[index - 1]],
+                    longitudes[path[index - 1]], latitudes[tryVisit], longitudes[tryVisit])) {
+                result = false;
+                break;
+            }
+        }
         // HINT: To determine whether two lines cross, use a provided helper function:
         // LineCrossDetector.linesCross(oneStartLat, oneStartLng, oneEndLat, oneEndLng,
         //                              otherStartLat, otherStartLng, otherEndLat, otherEndLng)
-        return true;
+        return result;
     }
+
 
     /**
      * Marks a target captured by putting its index in the first available (-1) slot of the path array.
