@@ -215,7 +215,8 @@ public final class GameActivity extends AppCompatActivity {
                     }
                 }
                 if (loc > 0) {
-                    addLine(targetLats[path[loc - 1]], targetLngs[path[loc - 1]], targetLats[target], targetLngs[target], PLAYER_COLOR);
+                    addLine(targetLats[path[loc - 1]], targetLngs[path[loc - 1]],
+                            targetLats[target], targetLngs[target], PLAYER_COLOR);
                 }
                 TargetVisitChecker.visitTarget(path, target);
             }
